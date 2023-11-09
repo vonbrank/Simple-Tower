@@ -1,6 +1,8 @@
 using System;
 using Combat;
+using Managers;
 using UnityEngine;
+using Utils.Event;
 
 namespace Control
 {
@@ -9,9 +11,26 @@ namespace Control
     {
         protected Fighter fighter;
 
+        protected EventBinding<StartAttackEvent> startAttackEventBinding;
+
+        private void OnEnable()
+        {
+            startAttackEventBinding = new EventBinding<StartAttackEvent>(HandleStartAttack);
+            EventBus<StartAttackEvent>.Register(startAttackEventBinding);
+        }
+
+        private void OnDisable()
+        {
+            EventBus<StartAttackEvent>.Deregister(startAttackEventBinding);
+        }
+
         protected void Awake()
         {
             fighter = GetComponent<Fighter>();
+        }
+
+        protected virtual void HandleStartAttack(StartAttackEvent startAttackEvent)
+        {
         }
     }
 }

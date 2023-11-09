@@ -1,29 +1,21 @@
 using System;
 using Managers;
 using UnityEngine;
+using Utils.Event;
 
 namespace Control
 {
     public class PlayerController : ControllerBase
     {
-        private void Start()
+        protected override void HandleStartAttack(StartAttackEvent startAttackEvent)
         {
-            // fighter.Attack(UnitManager.Instance.SelectEnemyUnit());
-        }
+            base.HandleStartAttack(startAttackEvent);
+            if (startAttackEvent.CombatTeam != UnitManager.CombatTeam.Player)
+            {
+                return;
+            }
 
-        private void OnEnable()
-        {
-            UnitManager.Instance.OnPlayerStartAttack += OnStartAttack;
-        }
-
-        private void OnDisable()
-        {
-            UnitManager.Instance.OnPlayerStartAttack -= OnStartAttack;
-        }
-
-        private void OnStartAttack()
-        {
-            fighter.Attack(UnitManager.Instance.SelectEnemyUnit());
+            fighter.Attack(UnitManager.Instance.SelectEnemyUnit(), UnitManager.CombatTeam.Player);
         }
     }
 }

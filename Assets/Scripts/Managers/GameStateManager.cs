@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using Utils;
+using Utils.Event;
 
 
 namespace Managers
@@ -41,12 +42,25 @@ namespace Managers
 
             OnAfterStateChanged?.Invoke(GameState);
 
-            Debug.Log($"New state: {newState}");
+            // Debug.Log($"New state: {newState}");
         }
 
         private async void HandleStart()
         {
-            await Task.Yield();
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            for (int i = 3; i >= -1; i--)
+            {
+                EventBus<StartCountDownEvent>.Raise(new StartCountDownEvent
+                {
+                    CountDownNumber = i
+                });
+
+                if (i >= 0)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(1));
+                }
+            }
+
             ChangeState(GameState.HeroTurn);
         }
 
@@ -57,7 +71,10 @@ namespace Managers
 
         private void HandleEnemyTurn()
         {
-            UnitManager.Instance.StartAttack(UnitManager.AttackInstigator.Enemy);
+            EventBus<StartAttackEvent>.Raise(new StartAttackEvent
+            {
+                CombatTeam = UnitManager.CombatTeam.Enemy
+            });
         }
     }
 

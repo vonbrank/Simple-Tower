@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Attributes;
+using Managers;
 using UnityEngine;
 
 namespace Combat
@@ -11,6 +12,8 @@ namespace Combat
         [SerializeField] private float speed = 2;
 
         private Health target;
+
+        public event Action OnProjectileDestroy;
 
         private void Start()
         {
@@ -39,10 +42,13 @@ namespace Combat
         {
             if (other.gameObject.CompareTag("Player"))
             {
-                // Debug.Log($"Projectile Hit on {other.gameObject.name}");
-                // Debug.Log("fuck");
                 Destroy(gameObject);
             }
+        }
+
+        private void OnDestroy()
+        {
+            OnProjectileDestroy?.Invoke();
         }
     }
 }

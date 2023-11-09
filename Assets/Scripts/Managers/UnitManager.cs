@@ -3,16 +3,45 @@ using System.Threading.Tasks;
 using Attributes;
 using UnityEngine;
 using Utils;
+using Utils.Event;
 using Random = UnityEngine.Random;
 
 namespace Managers
 {
     public class UnitManager : StaticInstance<UnitManager>
     {
+        public enum CombatTeam
+        {
+            Player,
+            Enemy,
+        }
+
         [SerializeField] private Health[] friendlyUnits;
         [SerializeField] private Health[] enemyUnits;
 
-        public event Action OnPlayerStartAttack;
+        // public event Action OnPlayerStartAttack;
+
+        private CombatTeam currentInstigator;
+        private int currentAttackFinishCount;
+
+        private EventBinding<UnitAttackFinishEvent> unitAttackFinishEventBinding;
+        private EventBinding<StartAttackEvent> startAttackEventBinding;
+
+        private void OnEnable()
+        {
+            startAttackEventBinding = new EventBinding<StartAttackEvent>(HandleAttackStart);
+            EventBus<StartAttackEvent>.Register(startAttackEventBinding);
+
+            unitAttackFinishEventBinding = new EventBinding<UnitAttackFinishEvent>(HandleUnitAttackFinish);
+            EventBus<UnitAttackFinishEvent>.Register(unitAttackFinishEventBinding);
+        }
+
+        private void OnDisable()
+        {
+            EventBus<StartAttackEvent>.Deregister(startAttackEventBinding);
+            EventBus<UnitAttackFinishEvent>.Deregister(unitAttackFinishEventBinding);
+        }
+
 
         public Health SelectFriendlyUnit()
         {
@@ -24,23 +53,24 @@ namespace Managers
             return enemyUnits[Random.Range(0, enemyUnits.Length)];
         }
 
-        public enum AttackInstigator
+        public void HandleAttackStart(StartAttackEvent startAttackEvent)
         {
-            Player,
-            Enemy,
+            currentInstigator = startAttackEvent.CombatTeam;
+            currentAttackFinishCount = 0;
         }
 
-        public async void StartAttack(AttackInstigator attackInstigator)
+        public async void HandleUnitAttackFinish(UnitAttackFinishEvent unitAttackFinishEvent)
         {
-            if (attackInstigator == AttackInstigator.Player)
+            currentAttackFinishCount += 1;
+
+            if (currentInstigator == CombatTeam.Player && friendlyUnits.Length == currentAttackFinishCount)
             {
-                OnPlayerStartAttack?.Invoke();
-                await Task.Delay(TimeSpan.FromSeconds(3));
+                await Task.Delay(TimeSpan.FromSeconds(1));
                 GameStateManager.Instance.ChangeState(GameState.EnemyTurn);
             }
-            else
+            else if (currentInstigator == CombatTeam.Enemy && enemyUnits.Length == currentAttackFinishCount)
             {
-                await Task.Delay(TimeSpan.FromSeconds(3));
+                await Task.Delay(TimeSpan.FromSeconds(1));
                 GameStateManager.Instance.ChangeState(GameState.HeroTurn);
             }
         }

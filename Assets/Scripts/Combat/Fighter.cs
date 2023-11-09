@@ -2,6 +2,7 @@ using System;
 using Attributes;
 using Managers;
 using UnityEngine;
+using Utils.Event;
 
 namespace Combat
 {
@@ -15,11 +16,15 @@ namespace Combat
         {
         }
 
-        public void Attack(Health target)
+        public void Attack(Health target, UnitManager.CombatTeam combatTeam)
         {
             var projectile = Instantiate(projectilePrefab, ProjectileSpawnPoint.transform.position,
                 Quaternion.identity);
             projectile.SetTarget(target);
+            projectile.OnProjectileDestroy += () => EventBus<UnitAttackFinishEvent>.Raise(new UnitAttackFinishEvent
+            {
+                CombatTeam = combatTeam
+            });
         }
     }
 }
