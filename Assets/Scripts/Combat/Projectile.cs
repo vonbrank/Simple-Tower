@@ -4,6 +4,7 @@ using Attributes;
 using Managers;
 using Unit;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Combat
 {
@@ -11,8 +12,10 @@ namespace Combat
     {
         [SerializeField] private float lifeSpan = 30;
         [SerializeField] private float speed = 2;
+        [SerializeField] private int damageAmount = 10;
 
         private UnitBase target;
+        private UnitManager.CombatTeam instigatorTeam;
 
         public event Action OnProjectileDestroy;
 
@@ -28,9 +31,10 @@ namespace Combat
             Destroy(gameObject);
         }
 
-        public void SetTarget(UnitBase target)
+        public void SetTarget(UnitBase target, UnitManager.CombatTeam instigatorTeam)
         {
             this.target = target;
+            this.instigatorTeam = instigatorTeam;
         }
 
         private void Update()
@@ -43,6 +47,15 @@ namespace Combat
         {
             if (other.gameObject.CompareTag("Player"))
             {
+                var health = other.gameObject.GetComponent<Health>();
+                if (health)
+                {
+                    health.TakeDamage(
+                        Mathf.Max(0,
+                            Random.Range(Mathf.RoundToInt(damageAmount * 0.5f), Mathf.RoundToInt(damageAmount * 1.5f))),
+                        instigatorTeam);
+                }
+
                 Destroy(gameObject);
             }
         }
