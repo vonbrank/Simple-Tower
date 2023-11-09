@@ -9,7 +9,7 @@ namespace Utils.Event
         private static readonly HashSet<IEventBinding<T>> bindings = new HashSet<IEventBinding<T>>();
 
         public static void Register(EventBinding<T> binding) => bindings.Add(binding);
-        public static void Deregister(EventBinding<T> binding) => bindings.Add(binding);
+        public static void Deregister(EventBinding<T> binding) => bindings.Remove(binding);
 
         public static void Raise(T @event)
         {

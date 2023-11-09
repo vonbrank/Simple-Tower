@@ -23,6 +23,7 @@ namespace Control
         protected virtual void OnDisable()
         {
             EventBus<StartAttackEvent>.Deregister(startAttackEventBinding);
+            // Debug.Log("fuck");
         }
 
         private void Awake()

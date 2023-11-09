@@ -10,7 +10,7 @@ namespace Combat
 {
     public class Projectile : MonoBehaviour
     {
-        [SerializeField] private float lifeSpan = 30;
+        [SerializeField] private float lifeSpan = 10;
         [SerializeField] private float speed = 2;
         [SerializeField] private int damageAmount = 10;
 
@@ -39,7 +39,11 @@ namespace Combat
 
         private void Update()
         {
-            transform.LookAt(target.transform.position);
+            if (!Helpers.IsNullOrDestroyed(target))
+            {
+                transform.LookAt(target.transform.position);
+            }
+
             transform.position += transform.forward * (speed * Time.deltaTime);
         }
 

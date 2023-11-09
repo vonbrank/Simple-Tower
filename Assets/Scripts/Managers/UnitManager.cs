@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Attributes;
 using Unit;
@@ -111,6 +112,8 @@ namespace Managers
         {
             currentAttackFinishCount += 1;
 
+            // Debug.Log($"Count =  {currentAttackFinishCount} Length = {currentCombatTeamInfo.UnitList.Length}");
+
             if (currentAttackFinishCount == currentCombatTeamInfo.UnitList.Length)
             {
                 FinishAttack();
@@ -128,6 +131,21 @@ namespace Managers
             {
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 GameStateManager.Instance.ChangeState(GameState.HeroTurn);
+            }
+        }
+
+        public void UnitDied(UnitBase unitBase)
+        {
+            for (int i = 0; i < combatTeamInfoList.Length; i++)
+            {
+                ref var combatTeamInfo = ref combatTeamInfoList[i];
+                if (combatTeamInfo.CombatTeam == unitBase.CombatTeam)
+                {
+                    combatTeamInfo.UnitList =
+                        combatTeamInfo.UnitList.Where(item => item != unitBase).ToArray();
+                    // Debug.Log($"team {unitBase.CombatTeam} num = {combatTeamInfo.UnitList.Length}");
+                    break;
+                }
             }
         }
     }
