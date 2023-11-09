@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Attributes;
 using Managers;
+using Unit;
 using UnityEngine;
 
 namespace Combat
@@ -11,7 +12,7 @@ namespace Combat
         [SerializeField] private float lifeSpan = 30;
         [SerializeField] private float speed = 2;
 
-        private Health target;
+        private UnitBase target;
 
         public event Action OnProjectileDestroy;
 
@@ -27,7 +28,7 @@ namespace Combat
             Destroy(gameObject);
         }
 
-        public void SetTarget(Health target)
+        public void SetTarget(UnitBase target)
         {
             this.target = target;
         }

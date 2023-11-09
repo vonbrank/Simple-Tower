@@ -1,6 +1,7 @@
 using System;
 using Attributes;
 using Managers;
+using Unit;
 using UnityEngine;
 using Utils.Event;
 
@@ -12,18 +13,20 @@ namespace Combat
         [SerializeField] private Projectile projectilePrefab;
         [SerializeField] private GameObject ProjectileSpawnPoint;
 
+        public UnitManager.CombatTeam CombatTeam { get; set; }
+
         private void Awake()
         {
         }
 
-        public void Attack(Health target, UnitManager.CombatTeam combatTeam)
+        public void Attack(UnitBase target)
         {
             var projectile = Instantiate(projectilePrefab, ProjectileSpawnPoint.transform.position,
                 Quaternion.identity);
             projectile.SetTarget(target);
             projectile.OnProjectileDestroy += () => EventBus<UnitAttackFinishEvent>.Raise(new UnitAttackFinishEvent
             {
-                CombatTeam = combatTeam
+                CombatTeam = CombatTeam
             });
         }
     }
