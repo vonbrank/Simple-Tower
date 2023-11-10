@@ -1,5 +1,5 @@
 using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Utils;
 using Utils.Event;
@@ -47,7 +47,7 @@ namespace Managers
 
         private async void HandleStart()
         {
-            await Task.Delay(TimeSpan.FromSeconds(1));
+            await UniTask.Delay(TimeSpan.FromSeconds(1));
             for (int i = 3; i >= -1; i--)
             {
                 EventBus<StartCountDownEvent>.Raise(new StartCountDownEvent
@@ -57,7 +57,7 @@ namespace Managers
 
                 if (i >= 0)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    await UniTask.Delay(TimeSpan.FromSeconds(1));
                 }
             }
 

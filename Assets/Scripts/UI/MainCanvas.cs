@@ -23,7 +23,7 @@ namespace UI
         private void Start()
         {
             attackButton.interactable = false;
-            // startCountingDownContainer.SetActive(true);
+            startCountingDownContainer.SetActive(true);
         }
 
         private void OnEnable()

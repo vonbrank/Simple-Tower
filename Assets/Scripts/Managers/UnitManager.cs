@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Attributes;
+using Cysharp.Threading.Tasks;
 using Unit;
 using UnityEngine;
 using Utils;
@@ -124,12 +124,12 @@ namespace Managers
         {
             if (currentInstigator == CombatTeam.Player)
             {
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                await UniTask.Delay(TimeSpan.FromSeconds(1));
                 GameStateManager.Instance.ChangeState(GameState.EnemyTurn);
             }
             else if (currentInstigator == CombatTeam.Enemy)
             {
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                await UniTask.Delay(TimeSpan.FromSeconds(1));
                 GameStateManager.Instance.ChangeState(GameState.HeroTurn);
             }
         }
