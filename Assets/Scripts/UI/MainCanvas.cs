@@ -30,6 +30,8 @@ namespace UI
         {
             GameStateManager.OnAfterStateChanged += OnAfterGameStateChanged;
             GameStateManager.OnBeforeStateChanged += OnBeforeGameStateChanged;
+            CombatManager.OnCombatInfoUpdate += HandleCombatInfoUpdate;
+
             attackButton.onClick.AddListener(HandleAttackButtonClicked);
 
             startCountDownEventBinding = new EventBinding<StartCountDownEvent>(HandleStartCountingDownEvent);
@@ -40,6 +42,8 @@ namespace UI
         {
             GameStateManager.OnAfterStateChanged -= OnAfterGameStateChanged;
             GameStateManager.OnBeforeStateChanged -= OnBeforeGameStateChanged;
+            CombatManager.OnCombatInfoUpdate -= HandleCombatInfoUpdate;
+
             attackButton.onClick.RemoveListener(HandleAttackButtonClicked);
 
             EventBus<StartCountDownEvent>.Deregister(startCountDownEventBinding);
@@ -47,20 +51,11 @@ namespace UI
 
         private void OnAfterGameStateChanged(GameState newGameState)
         {
-            if (newGameState == GameState.HeroTurn)
-            {
-                attackButton.interactable = true;
-            }
-
             gameStateText.text = $"Game State: {newGameState}";
         }
 
         private void OnBeforeGameStateChanged(GameState currentGameState)
         {
-            if (currentGameState == GameState.HeroTurn)
-            {
-                attackButton.interactable = false;
-            }
         }
 
         private void HandleAttackButtonClicked()
@@ -69,7 +64,6 @@ namespace UI
             {
                 CombatTeam = UnitManager.CombatTeam.Player
             });
-            attackButton.interactable = false;
         }
 
         private void HandleStartCountingDownEvent(StartCountDownEvent startCountDownEvent)
@@ -85,6 +79,11 @@ namespace UI
             {
                 startCountingDownContainer.SetActive(false);
             }
+        }
+
+        void HandleCombatInfoUpdate(CombatManager.CombatInfo combatInfo)
+        {
+            attackButton.interactable = combatInfo.PlayerCanAttack;
         }
     }
 }

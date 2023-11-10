@@ -19,7 +19,7 @@ namespace Systems
 
         private void Start()
         {
-            TestPause();
+            // TestPause();
         }
 
         private async void TestPause()
