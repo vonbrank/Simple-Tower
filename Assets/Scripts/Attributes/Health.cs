@@ -9,8 +9,7 @@ namespace Attributes
     {
         [SerializeField] private int maxHealth = 100;
 
-        private UnitBase unitBase;
-
+        public event Action<UnitManager.CombatTeam> OnDie;
 
         public int MaxHealth
         {
@@ -20,11 +19,6 @@ namespace Attributes
         public int CurrentHealth { get; private set; }
 
         public event Action<int> OnHealthUpdate;
-
-        private void Awake()
-        {
-            unitBase = GetComponent<UnitBase>();
-        }
 
         private void Start()
         {
@@ -39,7 +33,7 @@ namespace Attributes
             OnHealthUpdate?.Invoke(CurrentHealth);
             if (CurrentHealth <= 0)
             {
-                UnitManager.Instance.UnitDied(unitBase);
+                OnDie?.Invoke(instigatorTeam);
                 Destroy(gameObject);
             }
         }

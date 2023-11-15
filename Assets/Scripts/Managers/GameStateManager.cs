@@ -36,6 +36,12 @@ namespace Managers
                 case GameState.EnemyTurn:
                     HandleEnemyTurn();
                     break;
+                case GameState.Win:
+                    HandlePlayerWin();
+                    break;
+                case GameState.Lose:
+                    HandlePlayerLose();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
             }
@@ -75,6 +81,14 @@ namespace Managers
             {
                 CombatTeam = UnitManager.CombatTeam.Enemy
             });
+        }
+
+        private void HandlePlayerWin()
+        {
+        }
+
+        private void HandlePlayerLose()
+        {
         }
     }
 

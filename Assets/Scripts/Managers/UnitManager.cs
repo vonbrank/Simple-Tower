@@ -28,7 +28,7 @@ namespace Managers
         // [SerializeField] private Health[] friendlyUnits;
         // [SerializeField] private Health[] enemyUnits;
 
-        [SerializeField] private CombatTeamInfo[] combatTeamInfoList;
+        private CombatTeamInfo[] combatTeamInfoList;
 
         // public event Action OnPlayerStartAttack;
 
@@ -42,13 +42,23 @@ namespace Managers
         protected override void Awake()
         {
             base.Awake();
-            foreach (var combatTeamInfo in combatTeamInfoList)
+
+
+            var allUnit = FindObjectsOfType<UnitBase>();
+
+            combatTeamInfoList = new[]
             {
-                foreach (var unitBase in combatTeamInfo.UnitList)
+                new CombatTeamInfo
                 {
-                    unitBase.CombatTeam = combatTeamInfo.CombatTeam;
-                }
-            }
+                    CombatTeam = CombatTeam.Player,
+                    UnitList = allUnit.Where(item => item.CombatTeam == CombatTeam.Player).ToArray()
+                },
+                new CombatTeamInfo
+                {
+                    CombatTeam = CombatTeam.Enemy,
+                    UnitList = allUnit.Where(item => item.CombatTeam == CombatTeam.Enemy).ToArray()
+                },
+            };
         }
 
         private void OnEnable()
@@ -143,8 +153,22 @@ namespace Managers
                 {
                     combatTeamInfo.UnitList =
                         combatTeamInfo.UnitList.Where(item => item != unitBase).ToArray();
-                    // Debug.Log($"team {unitBase.CombatTeam} num = {combatTeamInfo.UnitList.Length}");
+                    Debug.Log(
+                        $"Team {unitBase.CombatTeam} has one unit died. Rest units num = {combatTeamInfo.UnitList.Length}");
                     break;
+                }
+
+                if (combatTeamInfo.UnitList.Length == 0)
+                {
+                    switch (combatTeamInfo.CombatTeam)
+                    {
+                        case CombatTeam.Player:
+                            GameStateManager.Instance.ChangeState(GameState.Lose);
+                            break;
+                        case CombatTeam.Enemy:
+                            GameStateManager.Instance.ChangeState(GameState.Win);
+                            break;
+                    }
                 }
             }
         }
