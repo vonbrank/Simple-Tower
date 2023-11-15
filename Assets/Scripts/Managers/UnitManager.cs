@@ -155,20 +155,21 @@ namespace Managers
                         combatTeamInfo.UnitList.Where(item => item != unitBase).ToArray();
                     Debug.Log(
                         $"Team {unitBase.CombatTeam} has one unit died. Rest units num = {combatTeamInfo.UnitList.Length}");
-                    break;
-                }
 
-                if (combatTeamInfo.UnitList.Length == 0)
-                {
-                    switch (combatTeamInfo.CombatTeam)
+                    if (combatTeamInfo.UnitList.Length == 0)
                     {
-                        case CombatTeam.Player:
-                            GameStateManager.Instance.ChangeState(GameState.Lose);
-                            break;
-                        case CombatTeam.Enemy:
-                            GameStateManager.Instance.ChangeState(GameState.Win);
-                            break;
+                        switch (combatTeamInfo.CombatTeam)
+                        {
+                            case CombatTeam.Player:
+                                GameStateManager.Instance.ChangeState(GameState.Lose);
+                                break;
+                            case CombatTeam.Enemy:
+                                GameStateManager.Instance.ChangeState(GameState.Win);
+                                break;
+                        }
                     }
+
+                    break;
                 }
             }
         }

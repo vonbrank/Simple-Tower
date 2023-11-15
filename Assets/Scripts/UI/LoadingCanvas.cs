@@ -9,15 +9,15 @@ namespace UI
     {
         [SerializeField] private Image loadingProgressBarInner;
 
-        private bool isFirstUpdate = false;
+        private bool isFirstUpdate = true;
 
 
         private void Update()
         {
-            if (!isFirstUpdate)
+            if (isFirstUpdate)
             {
                 SceneSystem.Instance.LoadingSceneCallback();
-                isFirstUpdate = true;
+                isFirstUpdate = false;
             }
 
             loadingProgressBarInner.fillAmount = SceneSystem.Instance.GetLoadingProgress();

@@ -7,7 +7,7 @@ using Utils;
 
 namespace Systems
 {
-    public class SceneSystem : StaticInstance<SceneSystem>
+    public class SceneSystem : Singleton<SceneSystem>
     {
         public bool IsPaused { get; private set; }
         public event Action<bool> OnPauseStateChange;
@@ -97,6 +97,7 @@ namespace Systems
             yield return new WaitForSeconds(0.5f);
 
             loadingAsyncOperation.allowSceneActivation = true;
+            loadingAsyncOperation = null;
         }
 
         public float GetLoadingProgress()
