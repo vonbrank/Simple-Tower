@@ -3,3 +3,4 @@
 *.{bat,[bB][aA][tT]} text eol=crlf
 
 Assets/Plugins/** linguist-vendored
+Assets/Scripts/Input/PlayerInputActions.cs linguist-vendored
