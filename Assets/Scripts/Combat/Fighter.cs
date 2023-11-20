@@ -13,23 +13,21 @@ namespace Combat
         [SerializeField] private Projectile projectilePrefab;
         [SerializeField] private GameObject ProjectileSpawnPoint;
 
-        private UnitBase unitBase;
-
-        public UnitManager.CombatTeam CombatTeam { get; set; }
+        private IUnit unit;
 
         private void Awake()
         {
-            unitBase = GetComponent<UnitBase>();
+            unit = GetComponent<IUnit>();
         }
 
         public void Attack(UnitBase target)
         {
             var projectile = Instantiate(projectilePrefab, ProjectileSpawnPoint.transform.position,
                 Quaternion.identity);
-            projectile.SetTarget(target, unitBase.CombatTeam);
+            projectile.SetTarget(target, unit.CombatTeam);
             projectile.OnProjectileDestroy += () => EventBus<UnitAttackFinishEvent>.Raise(new UnitAttackFinishEvent
             {
-                CombatTeam = CombatTeam
+                CombatTeam = unit.CombatTeam
             });
         }
     }

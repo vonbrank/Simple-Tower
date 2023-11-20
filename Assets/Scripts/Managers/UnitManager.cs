@@ -25,18 +25,9 @@ namespace Managers
             public UnitBase[] UnitList;
         }
 
-        // [SerializeField] private Health[] friendlyUnits;
-        // [SerializeField] private Health[] enemyUnits;
-
         private CombatTeamInfo[] combatTeamInfoList;
 
-        // public event Action OnPlayerStartAttack;
 
-        private CombatTeam currentInstigator;
-        private int currentAttackFinishCount;
-        private CombatTeamInfo currentCombatTeamInfo;
-
-        private EventBinding<UnitAttackFinishEvent> unitAttackFinishEventBinding;
         private EventBinding<StartAttackEvent> startAttackEventBinding;
 
         protected override void Awake()
@@ -63,17 +54,11 @@ namespace Managers
 
         private void OnEnable()
         {
-            startAttackEventBinding = new EventBinding<StartAttackEvent>(HandleAttackStart);
-            EventBus<StartAttackEvent>.Register(startAttackEventBinding);
-
-            unitAttackFinishEventBinding = new EventBinding<UnitAttackFinishEvent>(HandleUnitAttackFinish);
-            EventBus<UnitAttackFinishEvent>.Register(unitAttackFinishEventBinding);
         }
 
         private void OnDisable()
         {
             EventBus<StartAttackEvent>.Deregister(startAttackEventBinding);
-            EventBus<UnitAttackFinishEvent>.Deregister(unitAttackFinishEventBinding);
         }
 
         public bool SelectEnemyUnit(CombatTeam combatTeam, out UnitBase unit)
@@ -96,52 +81,6 @@ namespace Managers
 
             unit = null;
             return false;
-        }
-
-        private void HandleAttackStart(StartAttackEvent startAttackEvent)
-        {
-            currentInstigator = startAttackEvent.CombatTeam;
-            currentAttackFinishCount = 0;
-            bool teamInfoExisted = false;
-            for (int i = 0; i < combatTeamInfoList.Length; i++)
-            {
-                if (combatTeamInfoList[i].CombatTeam == startAttackEvent.CombatTeam)
-                {
-                    currentCombatTeamInfo = combatTeamInfoList[i];
-                    teamInfoExisted = true;
-                }
-            }
-
-            if (!teamInfoExisted)
-            {
-                FinishAttack();
-            }
-        }
-
-        private void HandleUnitAttackFinish(UnitAttackFinishEvent unitAttackFinishEvent)
-        {
-            currentAttackFinishCount += 1;
-
-            // Debug.Log($"Count =  {currentAttackFinishCount} Length = {currentCombatTeamInfo.UnitList.Length}");
-
-            if (currentAttackFinishCount == currentCombatTeamInfo.UnitList.Length)
-            {
-                FinishAttack();
-            }
-        }
-
-        private async void FinishAttack()
-        {
-            if (currentInstigator == CombatTeam.Player)
-            {
-                await UniTask.Delay(TimeSpan.FromSeconds(1));
-                GameStateManager.Instance.ChangeState(GameState.EnemyTurn);
-            }
-            else if (currentInstigator == CombatTeam.Enemy)
-            {
-                await UniTask.Delay(TimeSpan.FromSeconds(1));
-                GameStateManager.Instance.ChangeState(GameState.HeroTurn);
-            }
         }
 
         public void UnitDied(UnitBase unitBase)
@@ -172,6 +111,19 @@ namespace Managers
                     break;
                 }
             }
+        }
+
+        public CombatTeamInfo? GetCombatTeam(CombatTeam combatTeam)
+        {
+            for (int i = 0; i < combatTeamInfoList.Length; i++)
+            {
+                if (combatTeamInfoList[i].CombatTeam == combatTeam)
+                {
+                    return combatTeamInfoList[i];
+                }
+            }
+
+            return null;
         }
     }
 }

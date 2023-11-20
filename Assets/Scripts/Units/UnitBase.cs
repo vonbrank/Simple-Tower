@@ -6,7 +6,12 @@ using UnityEngine;
 
 namespace Unit
 {
-    public class UnitBase : MonoBehaviour
+    public interface IUnit
+    {
+        public UnitManager.CombatTeam CombatTeam { get; }
+    }
+
+    public class UnitBase : MonoBehaviour, IUnit
     {
         public Health Health { get; private set; }
         public Fighter Fighter { get; private set; }
